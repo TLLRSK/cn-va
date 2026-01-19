@@ -1,0 +1,253 @@
+import { JSDOM } from "jsdom";
+import createDOMPurify, { WindowLike } from "dompurify";
+import { AllowedSizeKey, MediaDetails } from "@/types/types";
+
+export const normalizeMediaData = (media: MediaDetails) => {
+  return {
+    id: media.id,
+    url: media.url,
+    alt: media.alt ?? "",
+    sizes: normalizeMediaSizes(media.sizes),
+  };
+};
+
+export const normalizeMediaSizes = (
+  sizes: Record<string, any> | undefined
+): MediaDetails["sizes"] => {
+  if (!sizes) return {};
+
+  const allowedKeys: AllowedSizeKey[] = [
+    "source_url",
+    "medium",
+    "large",
+    "thumbnail",
+    "medium_large",
+    "woocommerce_thumbnail",
+    "woocommerce_single",
+    "woocommerce_gallery_thumbnail",
+    "full",
+  ];
+
+  const normalizedSizes = allowedKeys.reduce<Record<string, string>>(
+    (acc, key) => {
+      const url = sizes?.[key]?.source_url;
+
+      if (typeof url === "string") {
+        acc[key] = url;
+      }
+
+      return acc;
+    },
+    {}
+  );
+
+  return normalizedSizes;
+};
+
+/* Sanitizing Post rendered content */
+const { window } = new JSDOM("<!DOCTYPE html>");
+const DOMPurify = createDOMPurify(window as WindowLike);
+
+export function sanitizeWordPressContent(dirty: string): string {
+  return DOMPurify.sanitize(dirty, {
+    ALLOWED_TAGS: [
+      "p",
+      "br",
+      "em",
+      "strong",
+      "a",
+      "ul",
+      "ol",
+      "li",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+    ],
+    ALLOWED_ATTR: ["href", "target", "rel", "class"],
+    FORBID_TAGS: ["script", "style", "iframe", "object", "embed"],
+    FORBID_ATTR: ["onclick", "onerror", "onload"],
+  });
+}
+
+export function decodeEntities(text: string): string {
+  // Create a new JSDOM instance for entity decoding
+  const { window } = new JSDOM("<!DOCTYPE html>");
+  const { document } = window;
+
+  return text
+    .replace(/&#8217;/g, "'")
+    .replace(/&#8211;/g, "-")
+    .replace(/&#038;/g, "&")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&[a-z]+;/gi, (match) => {
+      const el = document.createElement("div");
+      el.innerHTML = match;
+      return el.textContent || match;
+    });
+}
+
+export const currenciesMap: Record<string, string> = {
+  AED: "د.إ",
+  AFN: "؋",
+  ALL: "L",
+  AMD: "AMD",
+  ANG: "ƒ",
+  AOA: "Kz",
+  ARS: "$",
+  AUD: "$",
+  AWG: "ƒ",
+  AZN: "AZN",
+  BAM: "KM",
+  BBD: "$",
+  BDT: "৳ ",
+  BGN: "лв.",
+  BHD: ".د.ب",
+  BIF: "Fr",
+  BMD: "$",
+  BND: "$",
+  BOB: "Bs.",
+  BRL: "R$",
+  BSD: "$",
+  BTC: "฿",
+  BTN: "Nu.",
+  BWP: "P",
+  BYR: "Br",
+  BZD: "$",
+  CAD: "$",
+  CDF: "Fr",
+  CHF: "CHF",
+  CLP: "$",
+  CNY: "¥",
+  COP: "$",
+  CRC: "₡",
+  CUC: "$",
+  CUP: "$",
+  CVE: "$",
+  CZK: "Kč",
+  DJF: "Fr",
+  DKK: "DKK",
+  DOP: "RD$",
+  DZD: "د.ج",
+  EGP: "EGP",
+  ERN: "Nfk",
+  ETB: "Br",
+  EUR: "€",
+  FJD: "$",
+  FKP: "£",
+  GBP: "£",
+  GEL: "ლ",
+  GGP: "£",
+  GHS: "₵",
+  GIP: "£",
+  GMD: "D",
+  GNF: "Fr",
+  GTQ: "Q",
+  GYD: "$",
+  HKD: "$",
+  HNL: "L",
+  HRK: "Kn",
+  HTG: "G",
+  HUF: "Ft",
+  IDR: "Rp",
+  ILS: "₪",
+  IMP: "£",
+  INR: "₹",
+  IQD: "ع.د",
+  IRR: "﷼",
+  IRT: "تومان",
+  ISK: "kr.",
+  JEP: "£",
+  JMD: "$",
+  JOD: "د.ا",
+  JPY: "¥",
+  KES: "KSh",
+  KGS: "сом",
+  KHR: "៛",
+  KMF: "Fr",
+  KPW: "₩",
+  KRW: "₩",
+  KWD: "د.ك",
+  KYD: "$",
+  KZT: "KZT",
+  LAK: "₭",
+  LBP: "ل.ل",
+  LKR: "රු",
+  LRD: "$",
+  LSL: "L",
+  LYD: "ل.د",
+  MAD: "د.م.",
+  MDL: "MDL",
+  MGA: "Ar",
+  MKD: "ден",
+  MMK: "Ks",
+  MNT: "₮",
+  MOP: "P",
+  MRO: "UM",
+  MUR: "₨",
+  MVR: ".ރ",
+  MWK: "MK",
+  MXN: "$",
+  MYR: "RM",
+  MZN: "MT",
+  NAD: "$",
+  NGN: "₦",
+  NIO: "C$",
+  NOK: "kr",
+  NPR: "₨",
+  NZD: "$",
+  OMR: "ر.ع.",
+  PAB: "B/.",
+  PEN: "S/.",
+  PGK: "K",
+  PHP: "₱",
+  PKR: "₨",
+  PLN: "zł",
+  PRB: "р.",
+  PYG: "₲",
+  QAR: "ر.ق",
+  RMB: "¥",
+  RON: "lei",
+  RSD: "дин.",
+  RUB: "₽",
+  RWF: "Fr",
+  SAR: "ر.س",
+  SBD: "$",
+  SCR: "₨",
+  SDG: "ج.س.",
+  SEK: "kr",
+  SGD: "$",
+  SHP: "£",
+  SLL: "Le",
+  SOS: "Sh",
+  SRD: "$",
+  SSP: "£",
+  STD: "Db",
+  SYP: "ل.س",
+  SZL: "L",
+  THB: "฿",
+  TJS: "ЅМ",
+  TMT: "m",
+  TND: "د.ت",
+  TOP: "T$",
+  TRY: "₺",
+  TTD: "$",
+  TWD: "NT$",
+  TZS: "Sh",
+  UAH: "₴",
+  UGX: "UGX",
+  USD: "$",
+  UYU: "$",
+  UZS: "UZS",
+  VEF: "Bs F",
+  VND: "₫",
+  VUV: "Vt",
+  WST: "T",
+  XAF: "Fr",
+  XCD: "$",
+  XOF: "Fr",
+  XPF: "Fr",
+  YER: "﷼",
+  ZAR: "R",
+  ZMW: "ZK",
+};
