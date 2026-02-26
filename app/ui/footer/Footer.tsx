@@ -5,6 +5,7 @@ import { SocialMedia } from "@/types/types";
 import FooterLinks from "./FooterLinks";
 import LinkSocial from "../links/LinkSocial";
 
+export const dynamic = 'force-dynamic'
 
 const Footer = async () => {
   const contactData = await getPageData("contact");

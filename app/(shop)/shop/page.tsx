@@ -4,6 +4,8 @@ import { getProductsCategories, getProductsData } from "@/lib/actions";
 import { FilterProvider } from "@/app/context/filterContext";
 import ControlBar from "@/app/ui/shop/products/ControlBar";
 
+export const dynamic = 'force-dynamic'
+
 const ShopPage = async () => {
   const products = await getProductsData();
   const categories = await getProductsCategories();

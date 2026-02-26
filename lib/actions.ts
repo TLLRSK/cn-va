@@ -13,13 +13,13 @@ import {
 import { getAuthToken } from "./auth";
 import { normalizeMediaData, normalizeMediaSizes } from "./utils";
 
-const { NEXT_API_URL, WC_API_URL, APP_ORIGIN } = process.env;
+const { NEXT_PUBLIC_API_URL, WC_API_URL, APP_ORIGIN } = process.env;
 
 /* FETCH */
 export const getPageData = async (pageSlug: string) => {
   try {
     const response = await fetch(
-      `${NEXT_API_URL}/pages?slug=${pageSlug}&_fields=id,slug,title,categories,acf`,
+      `${NEXT_PUBLIC_API_URL}/pages?slug=${pageSlug}&_fields=id,slug,title,categories,acf`,
       {
         next: {
           revalidate: 3600,
@@ -44,7 +44,7 @@ export const getPageData = async (pageSlug: string) => {
 export const getAboutData = async () => {
   try {
     const response = await fetch(
-      `${NEXT_API_URL}/pages?slug="about"&_embed&_fields=_links,_embedded,id,slug,title,featured_media,categories,acf&acf_format=standard`,
+      `${NEXT_PUBLIC_API_URL}/pages?slug="about"&_embed&_fields=_links,_embedded,id,slug,title,featured_media,categories,acf&acf_format=standard`,
       {
         next: {
           revalidate: 3600,
@@ -106,7 +106,7 @@ export const getAboutData = async () => {
 export const getPrivacyPolicy = async () => {
   try {
     const response = await fetch(
-      `${NEXT_API_URL}/pages?slug=privacy-policy&_fields=content`,
+      `${NEXT_PUBLIC_API_URL}/pages?slug=privacy-policy&_fields=content`,
       {
         next: {
           revalidate: 3600,
@@ -130,7 +130,7 @@ export const getPrivacyPolicy = async () => {
 export const getTerms = async () => {
   try {
     const response = await fetch(
-      `${NEXT_API_URL}/pages?slug=terms&_fields=content`,
+      `${NEXT_PUBLIC_API_URL}/pages?slug=terms&_fields=content`,
       {
         next: {
           revalidate: 86400,
@@ -153,7 +153,7 @@ export const getTerms = async () => {
 
 export const getPostsData = async () => {
   const response = await fetch(
-    `${NEXT_API_URL}/posts?_embed&_fields=_links,_embedded,id,slug,title,categories`,
+    `${NEXT_PUBLIC_API_URL}/posts?_embed&_fields=_links,_embedded,id,slug,title,categories`,
     {
       next: {
         revalidate: 3600,
@@ -199,7 +199,7 @@ export const getPostsData = async () => {
 
 export const getCategories = async () => {
   try {
-    const response = await fetch(`${NEXT_API_URL}/categories`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/categories`, {
       next: {
         revalidate: 86400,
         tags: ["categories"],
@@ -224,7 +224,7 @@ export const getCategories = async () => {
 
 export const getSinglePost = async (slug: string) => {
   const response = await fetch(
-    `${NEXT_API_URL}/posts?slug=${slug}&_fields=id,slug,title,content,acf&acf_format=standard`,
+    `${NEXT_PUBLIC_API_URL}/posts?slug=${slug}&_fields=id,slug,title,content,acf&acf_format=standard`,
     {
       next: {
         revalidate: 3600,
