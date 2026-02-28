@@ -198,6 +198,7 @@ export const getPostsData = async () => {
 };
 
 export const getCategories = async () => {
+  console.log(NEXT_PUBLIC_API_URL);
   try {
     const response = await fetch(`${NEXT_PUBLIC_API_URL}/categories`, {
       next: {
@@ -210,7 +211,10 @@ export const getCategories = async () => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
+    console.log("Categories response:", response);
+
     const data = await response.json();
+
     return data.map((category: TransformedCategory, i: number) => ({
       id: category.id,
       name: category.name,
