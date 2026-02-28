@@ -10,8 +10,6 @@ const NavProjects = () => {
   const { id } = useSingleProject();
   const { indexedPosts } = usePostsIndex(allProjects, id);
 
-  console.log("Indexed Posts:", indexedPosts);
-
   return (
     <nav className="w-full flex justify-between px-sm md:px-md mt-lg mb-4xl ">
       

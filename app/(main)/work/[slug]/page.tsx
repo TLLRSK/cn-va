@@ -17,10 +17,6 @@ const SingleProjectPage = async ({
   const allProjects = await getPostsData();
   const categories = await getCategories();
 
-  console.log("Project Data:", projectData);
-  console.log("All Projects:", allProjects);
-  console.log("Categories:", categories);
-
   return (
     <ProjectsProvider
       initialProjects={allProjects}
